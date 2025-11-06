@@ -31,7 +31,7 @@ def str2date(str):
 gare = '41527'    #473921  41527
 url = 'https://prim.iledefrance-mobilites.fr/marketplace/stop-monitoring?MonitoringRef=STIF%3AStopPoint%3AQ%3A'+ gare +'%3A&LineRef=STIF%3ALine%3A%3AC01742%3A'
 
-token = 'YrYPqXUz8z3UyBvw3D7Vn8MdcGbi31l9'
+token = ''
 
 headers = {
     "apiKey": token,
@@ -71,19 +71,17 @@ while infini == 1:
                     attente = int(ecart.seconds/60)
                     listeParis.append(attente)
                 # Vers Cergy    
-                if destination == 'Gare de Cergy-Préfecture' and len(listeCergy) < 3 :
+                if destination == 'Cergy Le Haut' and len(listeCergy) < 3 :
                     ecart = arrivee - maintenant
                     attente = int(ecart.seconds/60)
                     listeCergy.append(attente)
             
     
-        ###########################
     # Dans le cas ou les donnees n'ont pas ete correctement recues
     else:
         print("echec")
         
     # On attend 30 secondes entre chaque iteration 
-    print(listeParis[0])
     sleep(30)
         
 
