@@ -1,6 +1,7 @@
 import requests
 from datetime import datetime, timezone
 from time import sleep
+import pprint
 
 ## FONCTIONS ##################################################################
 
@@ -28,15 +29,16 @@ def str2date(str):
 
 ## CODE #######################################################################
 
-gare = '41527'    #473921  41527
-url = 'https://prim.iledefrance-mobilites.fr/marketplace/stop-monitoring?MonitoringRef=STIF%3AStopPoint%3AQ%3A'+ gare +'%3A&LineRef=STIF%3ALine%3A%3AC01742%3A'
+gare = '65048'    #473921  41527  473109  65048
+url = 'https://prim.iledefrance-mobilites.fr/marketplace/stop-monitoring?MonitoringRef=STIF%3AStopArea%3ASP%3A'+ gare +'%3A&LineRef=STIF%3ALine%3A%3AC01742%3A'
 
-token = ''
+token = 'YrYPqXUz8z3UyBvw3D7Vn8MdcGbi31l9'
 
 headers = {
     "apiKey": token,
     "Accept": "application/json"
 }
+
 
 # Boucle infinie
 infini =  1
@@ -66,16 +68,21 @@ while infini == 1:
             if arrivee > maintenant:
                 destination = idx["MonitoredVehicleJourney"]["DestinationName"][0]["value"]
                 # Vers Paris
-                if (destination == 'Gare de Boissy-Saint-Léger' or destination == 'Torcy') and len(listeParis) < 3 :
+                if (destination == 'Gare de Boissy-Saint-Léger' or destination == 'Torcy' or destination == 'Marne-la-Vallée Chessy') and len(listeParis) < 3 :
                     ecart = arrivee - maintenant
                     attente = int(ecart.seconds/60)
                     listeParis.append(attente)
                 # Vers Cergy    
-                if destination == 'Cergy Le Haut' and len(listeCergy) < 3 :
+                if destination == 'Cergy le Haut' and len(listeCergy) < 3 :
                     ecart = arrivee - maintenant
                     attente = int(ecart.seconds/60)
                     listeCergy.append(attente)
-            
+        
+        # Affichage DEBUG
+        print("Paris")
+        pprint.pprint(listeParis)
+        print("Cergy")
+        pprint.pprint(listeCergy)
     
     # Dans le cas ou les donnees n'ont pas ete correctement recues
     else:
