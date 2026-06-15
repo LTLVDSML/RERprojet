@@ -68,6 +68,9 @@ while infini == 1:
         # On enregitrera les 3 prochains trains dans chaque direction
         listeParis = []
         listeCergy = []
+        ParisBinaire = []
+        CergyBinaire = []
+        trame = ''
     
         # On traite chaque train recupere
         for idx in echantillon:
@@ -81,17 +84,35 @@ while infini == 1:
                     ecart = arrivee - maintenant
                     attente = int(ecart.seconds/60)
                     listeParis.append(attente)
-                # Vers Cergy    
-                if destination == 'Cergy le Haut' and len(listeCergy) < 3 :
+		    # Saturatration temps attente
+                    attente = min(attente, 99)
+		    # Conversion en binaire
+                    ParisBinaire.append(format(attente, '07b'))
+                # Vers Cergy
+                if (destination == 'Cergy le Haut') and len(listeCergy) < 3 :
                     ecart = arrivee - maintenant
                     attente = int(ecart.seconds/60)
                     listeCergy.append(attente)
-        
+		    # Saturatration temps attente
+                    attente = min(attente, 99)
+                    # Conversion en binaire
+                    CergyBinaire.append(format(attente, '07b'))
+
+        # Creation trame de commande
+        for horaire in ParisBinaire:
+            trame = trame + horaire
+        for horaire in CergyBinaire:
+            trame = trame + horaire
+
         # Affichage DEBUG
         print("Paris")
         pprint.pprint(listeParis)
+        pprint.pprint(ParisBinaire)
         print("Cergy")
         pprint.pprint(listeCergy)
+        pprint.pprint(CergyBinaire)
+        print("trame")
+        pprint.pprint(trame)
     
     # Dans le cas ou les donnees n'ont pas ete correctement recues
     else:
