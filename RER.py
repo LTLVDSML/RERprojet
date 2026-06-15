@@ -1,5 +1,5 @@
 import requests
-import RPi.GPIO as GPIO
+#import RPi.GPIO as GPIO
 from datetime import datetime, timezone
 from time import sleep
 import pprint
@@ -31,9 +31,9 @@ def str2date(str):
 ## CODE #######################################################################
 # Parametres reglage pin de sortie
 pin = 23
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(pin, GPIO.OUT)
-GPIO.output(pin,GPIO.LOW)
+#GPIO.setmode(GPIO.BCM)
+#GPIO.setup(pin, GPIO.OUT)
+#GPIO.output(pin,GPIO.LOW)
 
 # Parametres recuperation donnees API
 gare = '65048'    #473921  41527  473109  65048
@@ -77,7 +77,7 @@ while infini == 1:
             if arrivee > maintenant:
                 destination = idx["MonitoredVehicleJourney"]["DestinationName"][0]["value"]
                 # Vers Paris
-                if (destination == 'Boissy-Saint-Léger' or destination == 'Gare de Boissy-Saint-Léger' or destination == 'Torcy' or destination == 'Marne-la-Vallée Chessy') and len(listeParis) < 3 :
+                if (destination == 'Boissy-Saint-Léger' or destination == 'Gare de Boissy-Saint-Léger' or destination == 'Torcy' or destination == 'Marne-la-Vallée Chessy' or destination == 'Boissy-Saint-L�ger') and len(listeParis) < 3 :
                     ecart = arrivee - maintenant
                     attente = int(ecart.seconds/60)
                     listeParis.append(attente)
@@ -99,7 +99,7 @@ while infini == 1:
         
     # On attend 30 secondes entre chaque iteration 
     # DEBUG AFFICHAGE
-    GPIO.output(pin,GPIO.HIGH)
+    #GPIO.output(pin,GPIO.HIGH)
     sleep(30)
-    GPIO.output(pin,GPIO.LOW)
+    #GPIO.output(pin,GPIO.LOW)
     sleep(5)
