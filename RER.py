@@ -1,5 +1,5 @@
 import requests
-#import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 from datetime import datetime, timezone
 from time import sleep
 import pprint
@@ -31,9 +31,9 @@ def str2date(str):
 ## CODE #######################################################################
 # Parametres reglage pin de sortie
 pin = 23
-#GPIO.setmode(GPIO.BCM)
-#GPIO.setup(pin, GPIO.OUT)
-#GPIO.output(pin,GPIO.LOW)
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(pin, GPIO.OUT)
+GPIO.output(pin,GPIO.LOW)
 
 # Parametres recuperation donnees API
 gare = '65048'    #473921  41527  473109  65048
@@ -66,11 +66,13 @@ while infini == 1:
         # Recuperation du temps present en GMT
         maintenant = datetime.now(timezone.utc)
         # On enregitrera les 3 prochains trains dans chaque direction
-        listeParis = []
-        listeCergy = []
+        listeParis = [99, 99, 99]
+        idxParis = 0
+        listeCergy = [99, 99, 99]
+        idxCergy = 0
         ParisBinaire = []
         CergyBinaire = []
-        trame = ''
+        trame = '1'
     
         # On traite chaque train recupere
         for idx in echantillon:
@@ -80,23 +82,29 @@ while infini == 1:
             if arrivee > maintenant:
                 destination = idx["MonitoredVehicleJourney"]["DestinationName"][0]["value"]
                 # Vers Paris
-                if (destination == 'Boissy-Saint-Léger' or destination == 'Gare de Boissy-Saint-Léger' or destination == 'Torcy' or destination == 'Marne-la-Vallée Chessy' or destination == 'Boissy-Saint-L�ger') and len(listeParis) < 3 :
+                if (destination == 'Boissy-Saint-Léger' or destination == 'Gare de Boissy-Saint-Léger' or destination == 'Torcy' or destination == 'Marne-la-Vallée Chessy' or destination == 'Boissy-Saint-L�ger') and idxParis < 3 :
                     ecart = arrivee - maintenant
                     attente = int(ecart.seconds/60)
-                    listeParis.append(attente)
-		    # Saturatration temps attente
+                    # Saturatration temps attente
                     attente = min(attente, 99)
-		    # Conversion en binaire
-                    ParisBinaire.append(format(attente, '07b'))
+                    listeParis[idxParis] = attente
+		    # Incrementation compteur
+                    idxParis = idxParis + 1
                 # Vers Cergy
-                if (destination == 'Cergy le Haut') and len(listeCergy) < 3 :
+                if (destination == 'Cergy le Haut') and idxCergy < 3 :
                     ecart = arrivee - maintenant
                     attente = int(ecart.seconds/60)
-                    listeCergy.append(attente)
-		    # Saturatration temps attente
+                    # Saturatration temps attente
                     attente = min(attente, 99)
-                    # Conversion en binaire
-                    CergyBinaire.append(format(attente, '07b'))
+                    listeCergy[idxCergy] = attente
+                    # Incrementation compteur
+                    idxCergy = idxCergy + 1
+
+        # Conversion en binaire
+        for horaire in listeParis:
+            ParisBinaire.append(format(horaire, '07b'))
+        for horaire in listeCergy:
+            CergyBinaire.append(format(horaire, '07b'))
 
         # Creation trame de commande
         for horaire in ParisBinaire:
@@ -113,14 +121,20 @@ while infini == 1:
         pprint.pprint(CergyBinaire)
         print("trame")
         pprint.pprint(trame)
+
+        # Envoi de la trame
+        for bit in trame:
+            if bit == '1':
+                GPIO.output(pin,GPIO.HIGH)
+            if bit == '0':
+                GPIO.output(pin,GPIO.LOW)
+            sleep(1)
+        # Abaissement du signal de la trame
+        GPIO.output(pin,GPIO.LOW)
     
     # Dans le cas ou les donnees n'ont pas ete correctement recues
     else:
         print("echec")
         
-    # On attend 30 secondes entre chaque iteration 
-    # DEBUG AFFICHAGE
-    #GPIO.output(pin,GPIO.HIGH)
+    # On attend 60 secondes entre chaque iteration 
     sleep(30)
-    #GPIO.output(pin,GPIO.LOW)
-    sleep(5)
