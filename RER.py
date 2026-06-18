@@ -30,7 +30,9 @@ def str2date(str):
 
 ## CODE #######################################################################
 # Parametres reglage pin de sortie
-pin = 23
+delaiEntreTrame = 40    #s
+periodeTrame    = 0.1   #s
+pin             = 23
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(pin, GPIO.OUT)
 GPIO.output(pin,GPIO.LOW)
@@ -128,7 +130,7 @@ while infini == 1:
                 GPIO.output(pin,GPIO.HIGH)
             if bit == '0':
                 GPIO.output(pin,GPIO.LOW)
-            sleep(1)
+            sleep(periodeTrame)
         # Abaissement du signal de la trame
         GPIO.output(pin,GPIO.LOW)
     
@@ -136,5 +138,5 @@ while infini == 1:
     else:
         print("echec")
         
-    # On attend 60 secondes entre chaque iteration 
-    sleep(30)
+    # On attend 40 secondes entre chaque iteration 
+    sleep(delaiEntreTrame)

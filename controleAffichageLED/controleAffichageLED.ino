@@ -1,6 +1,6 @@
 // Variables fonctionnement
-int delaiEnvoiBit         = 1000;  //ms
-int delaiDetection        = 100;   //ms
+int delaiEnvoiBit         = 100;  //ms
+int delaiDetection        = 10;   //ms
 int seuilUn               = 200;
 
 // Definition du pin de reception donnees
